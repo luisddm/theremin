@@ -7,9 +7,18 @@ $.id('start').addEventListener('click', start);
 const context = new window.AudioContext();
 
 const osc = context.createOscillator();
-osc.connect(context.destination);
+const amp = context.createGain();
+
+osc.connect(amp);
+amp.connect(context.destination);
+
+window.o = osc;
+window.a = amp;
 
 osc.frequency.value = 0;
+amp.gain.value = 0;
+
+osc.start();
 
 function handleOrientation({ absolute, alpha, beta, gamma }) {
 
@@ -24,5 +33,11 @@ function handleOrientation({ absolute, alpha, beta, gamma }) {
 }
 
 function start(event) {
-  osc.start();
+  if (amp.gain.value) {
+    amp.gain.value = 0;
+    $.id('start').innerHTML = 'START';
+  } else {
+    amp.gain.value = 1;
+    $.id('start').innerHTML = 'STOP';
+  }
 }
